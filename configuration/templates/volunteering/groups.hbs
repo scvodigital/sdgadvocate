@@ -1,0 +1,61 @@
+{{#if @root.data.isAdmin ~}}
+<div class="empty">
+  <div class="empty-icon">
+    <span class="fal fa-users fa-3x"></span>
+  </div>
+  <div class="empty-action">
+    {{> log_action_buttons}}
+  </div>
+</div>
+
+<div class="content-break">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <polygon fill="#EEF0FA" points="100,0 100,100 0,0"></polygon>
+  </svg>
+  <div class="container">
+    <div class="bg-error s-rounded x-padding b-margin-full hidden" id="active-form-message">
+      <span id="form-message"></span>
+    </div>
+
+    <div class="columns cards equal-height">
+      {{#each @root.data.tasksInfo ~}}
+      <div class="column col-4">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title h5">
+              <a href="/hours/{{task_id}}/{{slugify organisation_name}}">{{organisation_name}}</a>
+            </div>
+            {{#if task_description ~}}
+            <div class="card-subtitle text-gray">{{truncate task_description 140}}</div>
+            {{/if ~}}
+            {{!-- {{#if un_sustainable_development_goals ~}}
+            <div class="card-subtitle text-gray">{{un_sustainable_development_goals}}</div>
+            {{/if ~}} --}}
+          </div>
+          <div class="card-body">
+            <ul class="fa-ul hours">
+              {{#if location ~}}
+              <li>
+                <span class="fa-li"><span class="far fa-map-marker-alt"></span></span>
+                <div class="card-subtitle text-gray">{{truncate location 140}}</div>
+              </li>
+              {{/if ~}}
+              <li>
+                <span class="fa-li"><span class="far fa-users"></span></span>
+                {{#compare (length hours_list) ">" 0 ~}}
+                {{inflect (length hours_list) "participant" "participants" true}}
+                {{else}}
+                No participants have been added yet
+                {{/compare ~}}
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer">
+          </div>
+        </div>
+      </div>
+      {{/each ~}}
+    </div>
+  </div>
+</div>
+{{/if ~}}

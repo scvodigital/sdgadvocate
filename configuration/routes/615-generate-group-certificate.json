@@ -1,0 +1,32 @@
+{
+  "name": "group_certificate",
+  "pattern": "/group-certificate/:task_id(/:hours_id)",
+  "debug": true,
+  "errorRoute": "five_hundred",
+  "tasks": [
+    "context.metaData.commonTasks.authRequired",
+    "context.metaData.commonTasks.getSignUpStatus",
+    "context.metaData.commonTasks.getAccountInfo",
+    "context.metaData.commonTasks.fullSignUpRequired",
+    "context.metaData.commonTasks.isAdmin",
+    "context.metaData.commonTasks.getTasksInfo",
+    {
+      "name": "pdfObjects",
+      "taskModule": "render",
+      "renderer": "handlebars",
+      "config": {
+        "output": "data",
+        "template": ">context.metaData.handlebars.templates.volunteering_certificate_object-body-admin",
+        "parseJson": true
+      }
+    },
+    {
+      "name": "destination",
+      "taskModule": "generatePdf",
+      "renderer": "handlebars",
+      "config": {
+        "definitionTemplate": ">context.metaData.handlebars.templates.volunteering_certificate_pdf-definition"
+      }
+    }
+  ]
+}

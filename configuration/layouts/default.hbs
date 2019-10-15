@@ -2,7 +2,6 @@
 <html lang="en">
 <head prefix="og: http://ogp.me/ns#">
   <meta charset="utf-8">
-  <base href="/">
   {{{layoutParts.head}}}
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -33,267 +32,388 @@
   <link rel="icon" type="image/png" sizes="96x96" href="{{~>asset_url url='images/icons/favicon-96x96.png'~}}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{~>asset_url url='images/icons/favicon-16x16.png'~}}">
   <link rel="manifest" href="{{~>asset_url url='images/icons/manifest.json'~}}">
-  <meta name="msapplication-TileColor" content="#3c7524">
+  <meta name="msapplication-TileColor" content="{{@root.context.metaData.theme.secondary}}">
   <meta name="msapplication-TileImage" content="{{~>asset_url url='images/icons/ms-icon-144x144.png'~}}">
-  <meta name="theme-color" content="#3c7524">
-  <link rel="search" type="application/opensearchdescription+xml" title="SDG Advocate" href="{{~>asset_url url='opensearch.xml'~}}" />
+  <meta name="theme-color" content="{{@root.context.metaData.theme.secondary}}">
+  <link rel="search" type="application/opensearchdescription+xml" title="{{@root.context.metaData.title}}" href="{{~>asset_url url='opensearch.xml'~}}" />
 
-  <!-- <link rel="canonical" href="https://sdgadvocate.org{{request.params.uri.pathname}}" /> -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-3467930-35"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'UA-3467930-35', {
-    'send_page_view': true,
-    'anonymize_ip': true,
-    'cookieDomain': 'none',
-    'custom_map': {
-      'dimension1': 'hit_type',
-      'dimension2': 'parent_document'
-    }
-  });
 
   {{#ifAny request.params.query.debug (contains request.url.hostname ".local") ~}}
-  console.log('#### DEBUG MODE ON ####');
-  console.log('Request:', {{{regexReplace (regexReplace (stringify request) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
-  console.log('Route:', {{{regexReplace (regexReplace (stringify route) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
-  console.log('Context:', {{{regexReplace (regexReplace (stringify context) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
-  console.log('Data:', {{{regexReplace (regexReplace (stringify data) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
-  console.log('Menus:', {{{regexReplace (regexReplace (stringify @root.context.metaData.menus) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
-  {{#if errors.[0]}}
-    console.error('Task Errors:', {{{regexReplace (regexReplace (stringify errors) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
-  {{/if}}
+    console.log('#### DEBUG MODE ON ####');
+    console.log('Request:', {{{regexReplace (regexReplace (stringify request) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
+    console.log('Route:', {{{regexReplace (regexReplace (stringify route) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
+    console.log('Context:', {{{regexReplace (regexReplace (stringify context) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
+    console.log('Data:', {{{regexReplace (regexReplace (stringify data) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
+    console.log('Menus:', {{{regexReplace (regexReplace (stringify @root.context.metaData.menus) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
+    {{#if errors.[0]}}
+      console.error('Task Errors:', {{{regexReplace (regexReplace (stringify errors) "(<\/script)" "gi" '</scr\" + \"ipt') "(\r|\n)" "gi" ""}}});
+    {{/if}}
   {{/ifAny ~}}
   </script>
 
-  <link type="text/css" rel="stylesheet" href="{{~>asset_url url='libraries/fontawesome-pro/css/all.min.css'~}}">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
 
-  <link type="text/css" rel="stylesheet" href="{{~>asset_url url='main.css'}}">
+  <link type="text/css" rel="stylesheet" href="{{~>asset_url url='libraries/leaflet/leaflet.css'~}}" />
+  <link type="text/css" rel="stylesheet" href="{{~>asset_url url='libraries/fontawesome-pro/css/all.min.css'~}}" />
+  <link type="text/css" rel="stylesheet" href="{{~>asset_url url='main.css'}}" />
 </head>
-<body class="mdc-theme--footer-dark-bg">
-  <sdgadvocate-site>
-    <div class="mdc-typography">
-      {{#ifAny request.params.query.debug (contains request.url.hostname ".local") ~}}
-        {{#if errors.[0]}}
-          <div style="z-index:100;position:fixed;top:0;right:0;padding:5px;background-color:#ff0000;color:#ffffff;">
-            Route Task Errors (F12)
-          </div>
+<body>
+  <site>
+    <div class="page">
+    {{#ifAny request.params.query.debug (contains request.url.hostname ".local") ~}}
+      {{#if errors.[0]}}
+        <div style="z-index:100;position:fixed;top:0;right:0;padding:5px;background-color:#ff0000;color:#ffffff;">
+          Route Task Errors (F12)
+        </div>
         {{/if}}
         {{#if logs.[0]}}
-          <div style="z-index:100;position:fixed;bottom:0;right:0;padding:5px;background-color:#0000ff;color:#ffffff;"
-               onclick="document.querySelector('#route-debug-log').style.display='block';">
-            Route Log
-          </div>
-          <div style="z-index:100;position:fixed;bottom:0;left:0;right:0;padding:5px;background-color:#ededed;color:#000000;overflow:auto;height:50vh;display:none;border-top:1px solid #cccccc;" id="route-debug-log">
-            <a style="position:fixed;right:25px;" onclick="document.querySelector('#route-debug-log').style.display='none';">x</a>
+        <div style="z-index:100;position:fixed;bottom:0;right:0;padding:5px;background-color:#0000ff;color:#ffffff;" onclick="document.querySelector('#route-debug-log').style.display='block';">
+          Route Log
+        </div>
+        <div style="z-index:100;position:fixed;bottom:0;left:0;right:0;padding:5px;background-color:#ededed;color:#000000;overflow:auto;height:50vh;display:none;border-top:1px solid #cccccc;" id="route-debug-log">
+          <a style="position:fixed;right:25px;" onclick="document.querySelector('#route-debug-log').style.display='none';">x</a>
 <pre style="white-space: pre-wrap;">
 {{~#each logs}}
 {{{this}}}
 
 {{/each~}}
 </pre>
-          </div>
-        {{/if}}
-      {{/ifAny}}
-
-      <header class="mdc-top-app-bar mdc-elevation--z5 top-bar-stuck" id="top-bar">
-        <div class="container-fluid">
-          <div class="mdc-top-app-bar__row mdc-top-app-bar__upper">
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start mdc-top-app-bar__section--logo">
-              <div class="container-fluid">
-                <a href="/"><img src="{{~>asset_url url='images/logos/unhscotland.webp'~}}" alt="UN House Scotland" /></a>
-              </div>
-            </section>
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-              <button class="mdc-top-app-bar__navigation-icon hide-lg" data-drawer-target="#mobile-menu">
-                <span class="far fa-fw fa-2x fa-bars"></span>
-              </button>
-            </section>
-            {{!-- <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end mdc-top-app-bar__main hide-md hide-sm">
-              {{#> components_tab_bar
-                   extraClasses="mdc-tab-bar__auto-width"
-                   id="main-tab-bar"}}
-                {{> components_tab
-                    url="/"
-                    labelClasses="mdc-theme--on-primary"
-                    active=(regexMatch @root.request.url.pathname "^/" "gi")
-                    label="Home"}}
-              {{/components_tab_bar}}
-            </section> --}}
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end mdc-top-app-bar__user hide-md hide-sm">
-              {{#if @root.data.auth ~}}
-                {{#>components_anchored_menu
-                    buttonClasses="mdc-theme--on-primary"
-                    imageUrl=(default @root.data.auth.photoURL false)
-                    imageClasses="far fa-fw user-avatar"
-                    iconClasses=(if (if @root.data.auth.photoURL false else=true) "far fa-fw fa-user-circle" else=false)
-                    buttonLabel=@root.data.auth.email
-                    arrowClasses="far fa-fw fa-angle-down"}}
-                  {{#each @root.context.metaData.menus.user-signed-in ~}}
-                    <a class="mdc-list-item {{#if (regexMatch @root.request.url.pathname route "gi")}} mdc-list-item--activated{{/if}}" href="{{stripTrailingSlash path}}" role="menuitem">
-                      {{#if icon ~}}
-                      <span class="far fa-{{icon}} mdc-list-item__graphic" aria-hidden="true"></span>
-                      {{/if ~}}
-                      {{{label}}}
-                    </a>
-                  {{/each ~}}
-                {{/components_anchored_menu}}
-              {{else}}
-                {{!-- {{#>components_tab_bar
-                    extraClasses="mdc-tab-bar__auto-width"
-                    id="user-not-signed-in-tab-bar"}}
-                  {{#each @root.context.metaData.menus.user-not-signed-in ~}}
-                    {{>components_tab
-                        url=(stripTrailingSlash path)
-                        labelClasses="mdc-theme--on-primary"
-                        active=(regexMatch @root.request.url.pathname route "gi")
-                        label=label}}
-                  {{/each}}
-                {{/components_tab_bar}} --}}
-              {{/if ~}}
-            </section>
-          </div>
         </div>
+      {{/if}}
+    {{/ifAny}}
+
+      <header class="container">
+        <section class="brand">
+          <a href="/" class="logo"><img src="{{~>asset_url url='images/logos/unhscotland.webp'~}}" alt="{{@root.context.metaData.title}}" /></a>
+        </section>
+        <section class="nav">
+          <a href="#" class="btn btn-link show-lg" aria-label="Menu" data-component="TasksTrigger" data-TasksTrigger='{
+              click: {
+                tasks: [
+                  {
+                    type: "elementManipulator",
+                    config: {
+                      ".mobile-menu": {
+                        "removeClass": "mobile-menu_closed mobile-menu_closing",
+                        "addClass": "mobile-menu_open"
+                      }
+                    }
+                  }
+                ]
+              }
+            }'>
+            <span class="fas fa-bars" aria-hidden="true"></span>
+          </a>
+          <span class="hide-sm">
+            {{#if @root.data.auth ~}}
+              {{#if @root.data.accountInfo.user_type ~}}
+                {{#each @root.context.metaData.menus.main-signed-in ~}}
+                  <a href="{{stripTrailingSlash path}}" class="btn btn-link{{#if (regexMatch @root.request.url.pathname route 'gi')}} btn-active{{/if}}">{{label}}</a>
+                {{/each}}
+                <div class="dropdown my-account">
+                  <div class="btn-group">
+                    <a href="#" class="btn dropdown-toggle">
+                      {{#if @root.data.auth.photoURL ~}}
+                        <img src="{{@root.data.auth.photoURL}}" class="avatar avatar-sm" />
+                      {{else}}
+                        <span class="far fa-fw fa-user-circle"></span>
+                      {{/if ~}}
+                      {{@root.data.auth.email}}
+                      <span class="far fa-fw fa-angle-down"></span>
+                    </a>
+                    <ul class="menu">
+                      <li class="menu-item">
+                        <a href="/" class="l-padding-full {{#compare @root.request.url.pathname '/'}} active{{/compare}}{{#if @root.data.accountInfo.verification_needed}} disabled{{/if}}">
+                          <span class="far fa-fw fa-home" aria-hidden="true"></span>
+                          Home
+                        </a>
+                      </li>
+                      {{#each @root.context.metaData.menus.user-signed-in ~}}
+                        {{#if (contains user-types @root.data.accountInfo.user_type) ~}}
+                          <li class="menu-item">
+                            <a href="{{stripTrailingSlash path}}" class="l-padding-full {{#if (regexMatch @root.request.url.pathname route 'gi')}} active{{/if}}">
+                              {{#if icon ~}}
+                              <span class="far fa-fw fa-{{icon}}" aria-hidden="true"></span>
+                              {{/if ~}}
+                              {{{label}}}
+                            </a>
+                          </li>
+                        {{/if ~}}
+                      {{/each ~}}
+                      <li class="menu-item">
+                        <a href="/sign-out" class="l-padding-full" data-component="TasksTrigger" data-TasksTrigger="sign-out">
+                          <span class="far fa-fw fa-sign-out-alt" aria-hidden="true"></span>
+                          Sign out
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              {{else}}
+                <a href="/" class="btn btn-link{{#if (regexMatch @root.request.url.pathname '^/$' 'gi')}} btn-active{{/if}}">Home</a>
+                {{#each @root.context.metaData.menus.main-not-signed-in ~}}
+                  <a href="{{stripTrailingSlash path}}" class="btn btn-link{{#if (regexMatch @root.request.url.pathname route 'gi')}} btn-active{{/if}}">{{label}}</a>
+                {{/each}}
+                <a href="/sign-out" class="btn btn-link" data-component="TasksTrigger" data-TasksTrigger="sign-out">Sign out</a>
+              {{/if ~}}
+            {{else}}
+              <a href="/" class="btn btn-link{{#if (regexMatch @root.request.url.pathname '^/$' 'gi')}} btn-active{{/if}}">Home</a>
+              {{#each @root.context.metaData.menus.main-not-signed-in ~}}
+                <a href="{{stripTrailingSlash path}}" class="btn btn-link{{#if (regexMatch @root.request.url.pathname route 'gi')}} btn-active{{/if}}">{{label}}</a>
+              {{/each}}
+              {{#each @root.context.metaData.menus.user-not-signed-in ~}}
+                <a href="{{stripTrailingSlash path}}" class="btn btn-link{{#if (regexMatch @root.request.url.pathname route 'gi')}} btn-active{{/if}} my-account">{{label}}</a>
+              {{/each}}
+            {{/if ~}}
+          </span>
+        </section>
+        <section class="page-title">
+          <h1>
+            {{> page_title location="body"}}
+          </h1>
+        </section>
       </header>
 
-      <aside class="mdc-drawer mdc-drawer--modal" id="mobile-menu" data-mdc-auto-init="MDCDrawer">
-        <div class="mdc-drawer__content">
-          <nav class="mdc-list">
-            <a class="mdc-list-item {{#compare @root.request.url.pathname "/"}} mdc-list-item--activated{{/compare}}"
-               href="/" aria-selected="true" tabindex="1">
-              <span class="far fa-home mdc-list-item__graphic" aria-hidden="true"></span>
-              Home
-            </a>
-
-            <div role="separator" class="mdc-list-divider"></div>
-
-            {{!-- {{#if @root.data.auth ~}}
-            <a class="mdc-list-item mdc-list-item__user" href="#">
-              <span class="mdc-list-item__graphic" aria-hidden="true">
-                <img src="{{@root.data.auth.photoURL}}" />
-              </span>
-              <span class="mdc-list-item__text">{{@root.data.auth.email}}</span>
-            </a>
-            {{#each @root.context.metaData.menus.user-signed-in ~}}
-            {{#compare path "===" "/" ~}}
-            {{else}}
-            <a class="mdc-list-item {{#if (regexMatch @root.request.url.pathname route "gi")}} mdc-list-item--activated{{/if}}"
-               href="{{stripTrailingSlash path}}" {{#if (regexMatch @root.request.url.pathname route "gi")}}aria-selected="true"{{else}}aria-hidden="true"{{/if}}>
-              {{#if icon ~}}
-              <span class="far fa-{{icon}} mdc-list-item__graphic" aria-hidden="true"></span>
-              {{/if ~}}
-              {{{label}}}
-            </a>
-            {{/compare ~}}
-            {{/each ~}}
-            {{else}}
-            {{#each @root.context.metaData.menus.user-not-signed-in ~}}
-            <a class="mdc-list-item {{#if (regexMatch @root.request.url.pathname route "gi")}} mdc-list-item--activated{{/if}}"
-               href="{{stripTrailingSlash path}}" {{#if (regexMatch @root.request.url.pathname route "gi")}}aria-selected="true"{{else}}aria-hidden="true"{{/if}}>
-              {{#if icon ~}}
-              <span class="far fa-{{icon}} mdc-list-item__graphic" aria-hidden="true"></span>
-              {{/if ~}}
-              {{{label}}}
-            </a>
-            {{/each ~}}
-            {{/if ~}} --}}
-          </nav>
-        </div>
-      </aside>
-
-      <div class="mdc-drawer-scrim"></div>
-
-      <main class="mdc-theme--primary-light-bg main-body {{#if layoutParts.sidebar}}drawer-container-permanent{{else}}drawer-container-temporary{{/if}}">
-        {{#if layoutParts.sidebar }}
-        <aside class="mdc-drawer mdc-drawer--occasional" id="sidebar-temporary" data-menu-button=".filter-search-button">
+      <div class="mobile-menu mobile-menu_closed">
+        <div class="mobile-menu_background" data-component="TasksTrigger" data-TasksTrigger='{
+          click: {
+            tasks: [
+              {
+                type: "elementManipulator",
+                config: {
+                  ".mobile-menu": {
+                    removeClass: "mobile-menu_open",
+                    addClass: "mobile-menu_closing"
+                  }
+                }
+              },
+              {
+                type: "delay",
+                config: {
+                  "500": [
+                    {
+                      type: "elementManipulator",
+                      config: {
+                        ".mobile-menu": {
+                          addClass: "mobile-menu_closed",
+                          removeClass: "mobile-menu_closing"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }'></div>
+        <aside class="mobile-menu_contents sidebar">
           {{{layoutParts.sidebar}}}
-        </aside>
-        <div class="mdc-drawer-scrim"></div>
-        {{/if}}
-        {{{layoutParts.body}}}
-      </main>
 
-      <footer class="mdc-layout__footer mdc-theme--footer-bg mdc-theme--on-footer">
+          <div class="b-margin-full b-padding-full v-padding">
+            <ul class="menu">
+              {{#if @root.data.auth ~}}
+                {{#if @root.data.accountInfo.user_type ~}}
+                  {{#each @root.context.metaData.menus.main-signed-in ~}}
+                    <li class="menu-item">
+                      <a href="{{stripTrailingSlash path}}" class="l-padding-full {{#if (regexMatch @root.request.url.pathname route 'gi')}}active{{/if}}">{{label}}</a>
+                    </li>
+                  {{/each}}
+                  <li class="menu-item">
+                    <a href="/sign-out" class="l-padding-full" data-component="TasksTrigger" data-TasksTrigger="sign-out">
+                      <span class="far fa-fw fa-sign-out-alt" aria-hidden="true"></span>
+                      Sign out
+                    </a>
+                  </li>
+                {{else}}
+                  <li class="menu-item">
+                    <a href="/" class="l-padding-full {{#if (regexMatch @root.request.url.pathname '^/$' 'gi')}}active{{/if}}">Home</a>
+                  </li>
+                  {{#each @root.context.metaData.menus.main-not-signed-in ~}}
+                    <li class="menu-item">
+                      <a href="{{stripTrailingSlash path}}" class="l-padding-full {{#if (regexMatch @root.request.url.pathname route 'gi')}}active{{/if}}">{{label}}</a>
+                    </li>
+                  {{/each}}
+                  <li class="menu-item">
+                    <a href="/sign-out" class="l-padding-full" data-component="TasksTrigger" data-TasksTrigger="sign-out">Sign out</a>
+                  </li>
+                {{/if ~}}
+              {{else}}
+                <li class="menu-item">
+                  <a href="/" class="l-padding-full {{#if (regexMatch @root.request.url.pathname '^/$' 'gi')}}active{{/if}}">Home</a>
+                </li>
+                {{#each @root.context.metaData.menus.main-not-signed-in ~}}
+                  <li class="menu-item">
+                    <a href="{{stripTrailingSlash path}}" class="l-padding-full {{#if (regexMatch @root.request.url.pathname route 'gi')}}active{{/if}}">{{label}}</a>
+                  </li>
+                {{/each}}
+                {{#each @root.context.metaData.menus.user-not-signed-in ~}}
+                  <li class="menu-item">
+                    <a href="{{stripTrailingSlash path}}" class="l-padding-full {{#if (regexMatch @root.request.url.pathname route 'gi')}} active{{/if}} my-saltire">{{label}}</a>
+                  </li>
+                {{/each}}
+              {{/if ~}}
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      {{#ifAll layoutParts.sidebar @root.data.accountInfo.user_type ~}}
+      <div class="sidebar-present">
+        <div class="columns col-gapless">
+          <aside class="sidebar column col-2 col-lg-3 col-xl-3 hide-lg">
+            {{{layoutParts.sidebar}}}
+          </aside>
+          <main class="body column col-10 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
+            {{{layoutParts.body}}}
+          </main>
+        </div>
+      </div>
+      {{else}}
+      <div class="sidebar-not-present">
+        <main class="body">
+          {{{layoutParts.body}}}
+        </main>
+      </div>
+      {{/ifAll ~}}
+
+      <div id="toaster"></div>
+
+      <footer class="footer">
         <div class="footer-main">
-          <div class="container-fluid">
-            <div class="mdc-layout-grid">
-              <div class="mdc-layout-grid__inner">
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-4-phone contact">
-                  <h3>Contact</h3>
-                  <ul class="fa-ul">
-                    <li>
-                      <span class="fa-li"><span class="fas fa-envelope"></span></span>
-                      <a href="mailto:hello@unhscotland.org.uk">hello@unhscotland.org.uk</a>
-                    </li>
-                    <li>
-                      <span class="fa-li"><span class="fas fa-phone fa-flip-horizontal"></span></span>
-                      <a href="tel:+"></a>
-                    </li>
+          <div class="container">
+            <div class="columns">
+              <div class="column col-3 info">
+                <h4>Help</h4>
+                {{!-- <p class="b-margin">
+                  {{#if @root.data.accountInfo.local_authority ~}}
+                    {{#with (getProperty @root.context.metaData.tsiList (slugify @root.data.accountInfo.local_authority)) ~}}
+                      {{#each contacts ~}}
+                        {{#if (regexMatch @root.data.accountInfo.postcode pattern "gi") ~}}
+                          <a href="{{fixUrl website}}" target="_blank">{{title}}</a>
+                        {{/if ~}}
+                      {{/each ~}}
+                    {{/with ~}}
+                  {{else}}
+                    The local Third Sector Interface in your area
+                  {{/if ~}}
+                  manages your personal data in relation to the {{@root.context.metaData.title}}.
+                </p>
+                <ul>
+                  <li>
+                    <a href="/privacy">Privacy notice</a>
+                  </li>
+                  <li>
+                    <a href="/terms">Terms &amp; conditions</a>
+                  </li>
+                  <li>
+                    <a href="/cookies">Cookie policy</a>
+                  </li>
+                </ul> --}}
+              </div>
+              <div class="column col-3 contact">
+                <h4>&nbsp;</h4>
+                <ul class="fa-ul">
+                  <li>
+                    <span class="fa-li"><span class="fas fa-envelope"></span></span>
+                    {{#if @root.data.accountInfo.local_authority ~}}
+                      {{#with (getProperty @root.context.metaData.tsiList (slugify @root.data.accountInfo.local_authority)) ~}}
+                        {{#each contacts ~}}
+                          {{#if (regexMatch @root.data.accountInfo.postcode pattern "gi") ~}}
+                            <a href="mailto:{{email}}">{{email}}</a>
+                          {{/if ~}}
+                        {{/each ~}}
+                      {{/with ~}}
+                    {{else}}
+                      <a href="mailto:{{@root.context.metaData.contacts.admin}}">{{@root.context.metaData.contacts.admin}}</a>
+                    {{/if ~}}
+                  </li>
+                  {{#if @root.data.accountInfo.local_authority ~}}
+                    {{#with (getProperty @root.context.metaData.tsiList (slugify @root.data.accountInfo.local_authority)) ~}}
+                      {{#each contacts ~}}
+                        {{#if (regexMatch @root.data.accountInfo.postcode pattern "gi") ~}}
+                          {{#if phone ~}}
+                            <li>
+                              <span class="fa-li"><span class="fas fa-phone fa-flip-horizontal"></span></span>
+                              <a href="tel:+44{{replace phone ' ' ''}}">{{phone}}</a>
+                            </li>
+                          {{/if ~}}
+                          {{#if twitter ~}}
+                            <li>
+                              <span class="fa-li"><span class="fab fa-twitter"></span></span>
+                              <a href="{{twitter}}" target="_blank">Twitter</a>
+                            </li>
+                          {{/if ~}}
+                          {{#if facebook ~}}
+                            <li>
+                              <span class="fa-li"><span class="fab fa-facebook"></span></span>
+                              <a href="{{facebook}}" target="_blank">Facebook</a>
+                            </li>
+                          {{/if ~}}
+                          {{#if youtube ~}}
+                            <li>
+                              <span class="fa-li"><span class="fab fa-youtube"></span></span>
+                              <a href="{{youtube}}" target="_blank">YouTube</a>
+                            </li>
+                          {{/if ~}}
+                          {{#if instagram ~}}
+                            <li>
+                              <span class="fa-li"><span class="fab fa-instagram"></span></span>
+                              <a href="{{instagram}}" target="_blank">Instagram</a>
+                            </li>
+                          {{/if ~}}
+                        {{/if ~}}
+                      {{/each ~}}
+                    {{/with ~}}
+                  {{else}}
                     <li>
                       <span class="fa-li"><span class="fab fa-twitter"></span></span>
-                      <a href="https://twitter.com/unhousescotland" target="_blank">Twitter</a>
+                      <a href="https://twitter.com/{{@root.context.metaData.twitter}}" target="_blank">Twitter</a>
                     </li>
-                  </ul>
-                </div>
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-4-phone help">
-                  <h3>Information</h3>
-                  <ul class="mdc-list">
-                    {{!--#each (filter @root.data.menus.hits.hits "_source.which_menus" "testIn" "footer-information") ~}}
-                    <li class="mdc-list-item">
-                      <a href="{{default _source.menu_url (concat "/" _source.slug)}}">{{{default _source.menu_label _source.title}}}</a>
+                  {{/if ~}}
+                </ul>
+              </div>
+              <div class="column col-6 about">
+                <h4>About</h4>
+                {{!-- <p class="b-margin">
+                  {{@root.context.metaData.fullTitle}} is run by the <a href="https://scvo.org">Scottish Council for Voluntary Organisations</a> and supported by the <a href="https://www.gov.scot/policies/third-sector">Scottish Government</a> and Scotland's <a href="https://www.gov.scot/policies/third-sector/third-sector-interfaces">Third Sector Interfaces</a>.
+                </p> --}}
+                <ul>
+                  {{#each @root.context.metaData.menus.footer-info ~}}
+                    <li>
+                      <a href="{{stripTrailingSlash path}}">{{{label}}}</a>
                     </li>
-                    {{/each ~--}}
-                  </ul>
-                </div>
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-4-phone info">
-                  <h3>Help</h3>
-                  <ul class="mdc-list">
-                    {{!--#each (filter @root.data.menus.hits.hits "_source.which_menus" "testIn" "footer-help") ~}}
-                    <li class="mdc-list-item">
-                      <a href="{{default _source.menu_url (concat "/" _source.slug)}}">{{{default _source.menu_label _source.title}}}</a>
-                    </li>
-                    {{/each ~--}}
-                  </ul>
-                </div>
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-4-phone about">
-                  <h3>About</h3>
-                  <p>
-                    <strong>SDG Advocate</strong> is run by <a href="https://www.unhscotland.org.uk">UN House Scotland</a> with support from the <a href="https://scvo.org">Scottish Council for Voluntary Organisations</a>. <a href="/about">Find out more</a>
-                  </p>
-                </div>
+                  {{/each ~}}
+                </ul>
               </div>
             </div>
           </div>
         </div>
         <div class="footer-copyright">
-          <div class="container-fluid">
-            <div class="mdc-layout-grid">
-              <div class="mdc-layout-grid__inner">
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-10-desktop mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-phone">
+          <div class="container">
+              {{!-- <div class="columns">
+                <div class="column col-8">
                   <p>
                     &copy; {{momentFormat (moment) "YYYY"}}. The Scottish Council for Voluntary Organisations (SCVO) is a Scottish Charitable Incorporated Organisation.<br />
                     Charity registered in Scotland <a href="https://www.oscr.org.uk/about-charities/search-the-register/charity-details?number=SC003558">SC003558</a>. Registered office Mansfield Traquair Centre, 15 Mansfield Place, Edinburgh EH3 6BB.
                   </p>
                 </div>
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-2-desktop mdc-layout-grid__cell--span-2-tablet mdc-layout-grid__cell--span-4-phone">
-                  <a href="https://scvo.org" class="brand-logo" title="Scottish Council for Voluntary Organisations">
+                <div class="column col-4 logos">
+                  <a href="https://www.gov.scot/policies/third-sector" class="brand-logo sg-logo" title="Scottish Government">
+                    <img src="{{~>asset_url url='images/logos/SG_Quaternary_govscot_RGB.png'~}}" alt="Scottish Government" />
+                  </a>
+                  <a href="https://scvo.org" class="brand-logo scvo-logo" title="Scottish Council for Voluntary Organisations">
                     <img src="{{~>asset_url url='images/logos/scvo.png'~}}" alt="Scottish Council for Voluntary Organisations" />
                   </a>
                 </div>
-              </div>
+              </div> --}}
             </div>
           </div>
         </div>
       </footer>
     </div>
-    <div class="mdc-snackbar mdc-elevation--z10" aria-live="assertive" aria-atomic="true" aria-hidden="true" id="app-snackbar">
-      <div class="mdc-snackbar__text"></div>
-      <div class="mdc-snackbar__action-wrapper">
-        <button type="button" class="mdc-snackbar__action-button"></button>
-      </div>
-    </div>
-  </sdgadvocate-site>
+  </site>
 
   <script type="text/javascript">
   var $buoop = {required:{e:-3,f:-3,o:-3,s:-1,c:-3},insecure:true,unsupported:true,api:2018.07 };
@@ -306,37 +426,60 @@
   catch(e){window.attachEvent("onload", $buo_f)}
   </script>
 
-  <script type="text/javascript" src="{{~>asset_url url='main.js'~}}"></script>
+  {{#each @root.context.metaData.handlebars.frontend.configs}}
+    <script data-component-config="{{@key}}" type="javascript/blocked">
+      {{{regexReplace (regexReplace this "^\s*return\s" "igm" "") "([^\\{])({{){2,}" "igm" "$1\\$2"}}}
+    </script>
+  {{/each}}
 
+  {{#each @root.context.metaData.handlebars.frontend.tasks}}
+    <script data-task="{{@key}}" type="javascript/blocked">
+      {{{regexReplace (regexReplace this "^\s*return\s" "igm" "") "([^\\{])({{){2,}" "igm" "$1\\$2"}}}
+    </script>
+  {{/each}}
+
+  {{#each @root.context.metaData.handlebars.frontend.partials}}
+    <script data-partial="{{@key}}" type="javascript/blocked">
+      {{{this}}}
+    </script>
+  {{/each}}
+
+  <script type="text/javascript" src="{{~>asset_url url='component-manager.js'~}}"></script>
   <script>
-    var sdgadvocate = null; readyListeners = [];
-    $(document).ready(function() {
-      sdgadvocate = new SDGAdvocate.SDGAdvocate({
-        apiKey: "AIzaSyBtMX6Yz069sYwUinR9_zrrHnZK2WmPkXg",
-        authDomain: "sdg-advocate.firebaseapp.com",
-        databaseURL: "https://sdg-advocate.firebaseio.com",
-        projectId: "sdg-advocate",
-        storageBucket: "sdg-advocate.appspot.com",
-        messagingSenderId: "113725462925",
-        appId: "1:113725462925:web:b18ec5ce5afc74ce"
-      });
-      ready = true;
-      readyListeners.forEach(function(listener) {
-        listener();
-      });
+    window.firebaseTaskConfig = {
+      upgradeTokenUrl: '/upgrade-token?token={idToken}',
+      cookieName: 'sa_cookie'
+    };
+    firebase.initializeApp({
+      apiKey: "AIzaSyBtMX6Yz069sYwUinR9_zrrHnZK2WmPkXg",
+      authDomain: "auth.sdgadvocate.org",
+      databaseURL: "https://sdg-advocate.firebaseio.com",
+      projectId: "sdg-advocate",
+      storageBucket: "sdg-advocate.appspot.com",
+      messagingSenderId: "113725462925",
+      appId: "1:113725462925:web:b18ec5ce5afc74ce"
     });
+  </script>
 
-    function registerReadyListener(listener) {
-      if (sdgadvocate) {
-        listener();
-      } else {
-        readyListeners.push(listener);
+  <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+  <script>
+  window.cookieconsent.initialise({
+    "palette": {
+      "popup": {
+        "background": "#DEEFFB",
+        "text": "#005EB8"
+      },
+      "button": {
+        "background": "#005EB8"
       }
+    },
+    "theme": "edgeless",
+    "position": "bottom-left",
+    "content": {
+      "message": "We use cookies to track anonymous usage statistics.",
+      "href": "/cookies"
     }
-
-    {{#if @root.context.metaData.terms ~}}
-    var terms = {{{safeStringify @root.context.metaData.terms}}};
-    {{/if ~}}
+  });
   </script>
 
   {{{layoutParts.foot}}}

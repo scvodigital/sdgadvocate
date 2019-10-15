@@ -1,0 +1,15 @@
+<div class="container">
+  {{#each @root.data.supplimentaryResponses.posts.hits.hits ~}}
+  {{#with _source ~}}
+  <h1>
+    {{{title}}}
+  </h1>
+  <div class="caption b-margin">
+    Posted {{momentFormat (moment publish_on "x") "Do MMM YYYY"}}
+  </div>
+  <div class="post-content">
+    {{{content}}}
+  </div>
+  {{/with ~}}
+  {{/each ~}}
+</div>

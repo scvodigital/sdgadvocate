@@ -1,0 +1,46 @@
+{
+  "name": "verify-hours-email-send",
+  "pattern": "/verify-hours-email-send",
+  "debug": true,
+  "errorRoute": "five_hundred",
+  "metaData": {
+    "title": "Tasks"
+  },
+  "tasks": [
+    "context.metaData.commonTasks.authRequired",
+    "context.metaData.commonTasks.getSignUpStatus",
+    "context.metaData.commonTasks.getAccountInfo",
+    "context.metaData.commonTasks.fullSignUpRequired",
+    "context.metaData.commonTasks.getTasksInfoUnverified",
+    {
+      "name": "setVerifyHoursCode",
+      "taskModule": "firebaseRtbSet",
+      "renderer": "handlebars",
+      "config": {
+        "appName": "saltireawards",
+        "pathTemplate": "/{{default data.auth.uid 'no-such-write-profile'}}/verify-hours/",
+        "setOrUpdate": "set",
+        "dataTemplate": ">context.metaData.handlebars.templates.volunteering_fb-verify-hours-data"
+      }
+    },
+    {
+      "name": "sendEmail",
+      "taskModule": "mailgun",
+      "renderer": "handlebars",
+      "config": {
+        "output": "data",
+        "parseJson": true,
+        "template": ">context.metaData.handlebars.templates.volunteering_email_verify-hours"
+      }
+    },
+    {
+      "name": "destination",
+      "taskModule": "redirect",
+      "config": {
+        "location": "/achievements",
+        "statusCode": 302
+      }
+    }
+
+  ]
+}

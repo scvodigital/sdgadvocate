@@ -1,0 +1,26 @@
+<div class="empty">
+  <div class="empty-icon">
+    <span class="fal fa-exclamation-circle fa-3x"></span>
+  </div>
+  <p class="empty-title h5">Error 500: Something went wrong</p>
+  <p class="empty-subtitle">Please try again, but contact us if the problem persists.</p>
+  <div class="empty-action">
+    <a href="/" class="btn btn-primary">Home</a>
+    <a href="mailto:{{> support_email_address}}" class="btn btn-link">Contact us</a>
+  </div>
+  <pre>
+    {{#each errors}}
+    --------------------------------
+    {{#if name}}Name: {{name}}{{/if}}
+    {{#if message}}Message: {{message}}{{/if}}
+    {{#if stack}}Stack: {{stack}}{{/if}}
+    {{#if sourceRoute.route.name}}Source route: {{sourceRoute.route.name}}{{/if}}
+    {{#if redirectTo}}Redirect To: {{redirectTo}}{{/if}}
+    {{#if statusCode}}Status code: {{statusCode}}{{/if}}
+    {{#if data}}Data: {{{stringify data}}}{{/if}}
+    {{#if task}}Task: {{{stringify task}}}{{/if}}
+    {{#if destination}}Destination: {{{stringify destination}}}{{/if}}
+    --------------------------------
+    {{/each}}
+  </pre>
+</div>

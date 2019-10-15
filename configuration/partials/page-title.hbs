@@ -1,0 +1,38 @@
+{{#*inline "route_title" ~}}
+{{~#if @root.data.isAdmin ~}}
+{{~#ifAny @root.route.metaData.title @root.route.metaData.adminTitle ~}}
+{{~#if @root.route.metaData.adminTitle ~}}
+{{@root.route.metaData.adminTitle}}
+{{#compare location "head" ~}} – {{@root.context.metaData.title}}{{~/compare ~}}
+{{else}}
+{{~#if @root.route.metaData.title ~}}
+{{@root.route.metaData.title}}
+{{#compare location "head" ~}} – {{@root.context.metaData.title}}{{~/compare ~}}
+{{~/if ~}}
+{{~/if ~}}
+{{else}}
+{{#compare location "head"}}{{@root.context.metaData.title}} – {{@root.context.metaData.tagline}}{{else}}{{@root.context.metaData.tagline}}{{/compare ~}}
+{{~/ifAny~}}
+{{else}}
+{{~#compare @root.route.metaData.title "Home" ~}}
+{{#compare location "head"}}{{@root.context.metaData.title}} – {{@root.context.metaData.tagline}}{{else}}{{@root.context.metaData.tagline}}{{/compare ~}}
+{{else}}
+{{~#if @root.route.metaData.title ~}}
+{{@root.route.metaData.title}}{{#compare location "head"}} – {{@root.context.metaData.title}}{{/compare ~}}
+{{else}}
+{{#compare location "head"}}{{@root.context.metaData.title}} – {{@root.context.metaData.tagline}}{{else}}{{@root.context.metaData.tagline}}{{/compare ~}}
+{{~/if~}}
+{{~/compare ~}}
+{{~/if ~}}
+{{/inline ~}}
+{{~#if @root.data.primaryResponse.hits.hits.[0] ~}}
+{{~#with @root.data.primaryResponse.hits.hits.[0]._source ~}}
+{{~#if title ~}}
+{{{title}}}{{~#compare ../location "head"}} – {{@root.context.metaData.title}}{{/compare ~}}
+{{else}}
+{{> route_title}}
+{{~/if ~}}
+{{~/with ~}}
+{{else}}
+{{> route_title}}
+{{~/if ~}}

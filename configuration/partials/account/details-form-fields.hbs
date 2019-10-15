@@ -1,66 +1,168 @@
-<div class="mdc-layout-grid">
-  <div class="mdc-layout-grid__inner">
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6-desktop mdc-layout-grid__cell--span-8-tablet mdc-layout-grid__cell--span-4-phone">
-      <div class="mdc-text-field mdc-text-field--box" data-mdc-auto-init="MDCTextField">
-        <input required id="first_name" name="first_name"
-               {{>form_validation_attributes @root.context.metaData.accountInfoValidation.first_name}}
-               class="mdc-text-field__input mdc-text-field--fullwidth"
-              value = "{{@root.data.accountInfo.first_name}}"
-        >
-        {{!-- value="{{@root.data.user_details.first_name}}"> --}}
-        <label class="mdc-floating-label" for="first_name">
-          First name
-        </label>
-      </div>
+<div class="form-horizontal form">
+  <div class="form-group">
+    <div class="column col-3">
+      <label class="form-label" for="first_name">First name</label>
     </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6-desktop mdc-layout-grid__cell--span-8-tablet mdc-layout-grid__cell--span-4-phone">
-      <div class="mdc-text-field mdc-text-field--box" data-mdc-auto-init="MDCTextField">
-        <input required id="last_name" name="last_name"
-          {{>form_validation_attributes @root.context.metaData.accountInfoValidation.last_name}}
-               class="mdc-text-field__input mdc-text-field--fullwidth"
-               value = "{{@root.data.accountInfo.last_name}}">
+    <div class="column col-9">
+      <input class="form-input" id="first_name" name="first_name" type="text" value="{{@root.data.accountInfo.first_name}}" placeholder="" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.first_name}}>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="column col-3">
+      <label class="form-label" for="last_name">Last name</label>
+    </div>
+    <div class="column col-9">
+      <input class="form-input" id="last_name" name="last_name" type="text" value="{{@root.data.accountInfo.last_name}}" placeholder="" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.last_name}}>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="column col-3">
+      <label class="form-label" for="date_of_birth">Date of birth</label>
+    </div>
+    <div class="column col-9">
+      {{#unless @root.data.accountInfo.date_of_birth ~}}
+        <input class="form-input" id="date_of_birth" max="{{momentFormat (dateMath 'now-13y') 'YYYY-MM-DD'}}" name="date_of_birth" type="date" value="{{@root.data.accountInfo.date_of_birth}}" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.date_of_birth}}>
+      {{else}}
+        <input class="form-input" id="date_of_birth_checked" max="{{momentFormat (dateMath 'now-12y') 'YYYY-MM-DD'}}" min="{{momentFormat (dateMath 'now-27y') 'YYYY-MM-DD'}}" name="date_of_birth_checked" type="date" value="{{@root.data.accountInfo.date_of_birth}}" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" disabled>
+        <input type="hidden" name="date_of_birth" value="{{@root.data.accountInfo.date_of_birth}}">
+        <div class="caption">
+          If your date of birth is incorrect here please <a href="mailto:{{>support_email_address}}">contact us</a>.
+        </div>
+      {{/unless ~}}
+    </div>
+  </div>
 
-        <label class="mdc-floating-label" for="last_name">
-          Last name
-        </label>
+  {{#unless admin ~}}
+    <div class="form-group" id="verification" style="display:none;">
+      <div class="column col-3">
+        <label class="form-label" for="verification_email">Your parent or guardian's email address</label>
       </div>
+      <div class="column col-9">
+        <input class="form-input" id="verification_email" name="verification_email" type="text" value="{{@root.data.accountInfo.verification_email}}" placeholder="" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.verification_email}}>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="column col-3">
+        <label class="form-label" for="school_college_name">School/college name</label>
+      </div>
+      <div class="column col-9">
+        <input class="form-input" id="school_college_name" name="school_college_name" type="text" value="{{@root.data.accountInfo.school_college_name}}" placeholder="" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.school_college_name}}>
+      </div>
+    </div>
+  {{else}}
+    <div class="form-group">
+      <div class="column col-3">
+        <label class="form-label" for="title">Job title</label>
+      </div>
+      <div class="column col-9">
+        <input class="form-input" id="title" name="title" type="text" value="{{@root.data.accountInfo.title}}" placeholder="" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.title}}>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="column col-3">
+        <label class="form-label" for="phone">Phone number</label>
+      </div>
+      <div class="column col-9">
+        <input class="form-input" id="phone" name="phone" type="text" value="{{@root.data.accountInfo.phone}}" placeholder="" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="focus-next" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.phone}}>
+      </div>
+    </div>
+    <input type="hidden" name="verification_email" value="anuttgens@gmail.com" />
+    <input type="hidden" name="admin" value="true" />
+  {{/unless ~}}
+  <input type="hidden" name="email" value="{{@root.data.auth.email}}">
+  <div class="form-group">
+    <div class="column col-3">
+      <label class="form-label" for="postcode">{{#if admin}}Work postcode{{else}}Home postcode{{/if}}</label>
+    </div>
+    <div class="column col-2">
+      <input class="form-input" id="postcode" name="postcode" type="text" value="{{@root.data.accountInfo.postcode}}" placeholder="" autocomplete="false" data-lpignore="true" data-component="TasksTrigger" data-TasksTrigger="postcode-lookup" {{>form_validation_attributes @root.context.metaData.accountInfoValidation.postcode}}>
     </div>
   </div>
-  <div class="mdc-layout-grid__inner">
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6-desktop mdc-layout-grid__cell--span-8-tablet mdc-layout-grid__cell--span-4-phone">
-      <div class="mdc-text-field mdc-text-field--box" data-mdc-auto-init="MDCTextField">
-        <input id="date_of_birth" name="date_of_birth"
-          {{>form_validation_attributes @root.context.metaData.accountInfoValidation.date_of_birth}}
-               class="mdc-text-field__input mdc-text-field--fullwidth"
-               value = "{{@root.data.accountInfo.date_of_birth}}">
-        <label class="mdc-floating-label" for="date_of_birth">
-          Date of birth
-        </label>
-      </div>
-    </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6-desktop mdc-layout-grid__cell--span-8-tablet mdc-layout-grid__cell--span-4-phone">
-      <div class="mdc-text-field mdc-text-field--box" data-mdc-auto-init="MDCTextField">
-        <input id="school_college_name" name="school_college_name"
-          {{>form_validation_attributes @root.context.metaData.accountInfoValidation.school_college_name}} class="mdc-text-field__input mdc-text-field--fullwidth"
-               value = "{{@root.data.accountInfo.school_college_name}}">
-        <label class="mdc-floating-label" for="school_college_name">
-          School / College name
-        </label>
-      </div>
-    </div>
-  </div>
-  <div id="verification" class="mdc-layout-grid__inner" style="display: none">
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6-desktop mdc-layout-grid__cell--span-8-tablet mdc-layout-grid__cell--span-4-phone">
-      <div class="mdc-text-field mdc-text-field--box" data-mdc-auto-init="MDCTextField">
-        <input type="email" id="verification_email" name="verification_email"
-          {{>form_validation_attributes @root.context.metaData.accountInfoValidation.verification_email}} class="mdc-text-field__input mdc-text-field--fullwidth"
-               value = "{{@root.data.accountInfo.verification_email}}">
-        <label class="mdc-floating-label" for="verification_email">
-          Your Parent or Guardian's email address
-        </label>
-      </div>
-    </div>
-  </div>
+  <input type="hidden" name="local_authority" id="local_authority" value="{{@root.data.accountInfo.local_authority}}" />
+  <input type="hidden" name="tsi_area" id="tsi_area" value="{{@root.data.accountInfo.tsi_area}}" />
+  <input type="hidden" name="tsi_contact_email" id="tsi_contact_email" value="{{@root.data.accountInfo.tsi_contact_email}}" />
 </div>
 
-<input type="hidden" name="external_id" value="{{data.auth.uid}}">
+<input type="hidden" name="external_id" value="{{@root.data.auth.uid}}" />
+
+<script data-component-config="postcode-lookup" type="javascript/blocked">
+  {
+    blur: {
+      tasks: [
+        {
+          type: "elementManipulator",
+          config: { "<.form": { addClass: 'disabled' } }
+        },
+        {
+          name: "postcodeLookup",
+          type: "request",
+          config: { url: { __template: "/postcode-lookup?q=\{{jquery rootElement 'val'}}" } }
+        },
+        {
+          type: "switch",
+          config: {
+            which: { __template: "\{{#any data.postcodeLookup}}found\{{/any}}" },
+            branches: {
+              default: {
+                tasks: [
+                  {
+                    type: "elementManipulator",
+                    config: {
+                      ">": { value: "", focus: true },
+                      "#local_authority": { value: "" },
+                      "#tsi_area": { value: "" },
+                      "#tsi_contact_email": { value: "" }
+                    }
+                  }
+                ]
+              },
+              found: {
+                tasks: [
+                  {
+                    type: "elementManipulator",
+                    config: {
+                      ">": { value: { __template: "\{{data.postcodeLookup.[0].place}}" } },
+                      "#local_authority": { value: { __template: "\{{data.postcodeLookup.[0].local_authority}}" } },
+                      "#tsi_area": { value: { __template: "\{{data.postcodeLookup.[0].tsi_area}}" } },
+                      "#tsi_contact_email": { value: { __template: "\{{data.postcodeLookup.[0].tsi_contact_email}}" } }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          type: "elementManipulator",
+          config: { "<.form": { removeClass: 'disabled' } }
+        }
+      ]
+    }
+  }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var $dobc = $('#date_of_birth_checked');
+    var $dob = $('#date_of_birth');
+    var $v_block = $('#verification')
+    var $v_email = $('#verification_email')
+
+    $dobc.change(function(){
+       var dob = $dobc.val();
+      var compareDate = new Date();
+      var dobTS = Date.parse(dob);
+      compareDate.setFullYear(compareDate.getFullYear() - 13);
+
+      var cdTS = compareDate.getTime();
+      if (dobTS > cdTS) {
+        $v_email.prop('required', true);
+        $v_block.show();
+      } else {
+        $v_email.prop('required', false);
+        $v_block.hide();
+
+      }
+    })
+  })
+</script>

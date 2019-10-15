@@ -2,9 +2,9 @@
   "name": "sign_up",
   "pattern": "/sign-up",
   "debug": true,
+  "errorRoute": "five_hundred",
   "metaData": {
-    "hideSearch": true,
-    "title": "Sign up - Sustainable Development Goals Advocate"
+    "title": "Sign up"
   },
   "tasks": [
     "context.metaData.commonTasks.authNotRequired",
@@ -23,8 +23,8 @@
           "default": {
             "layout": ">context.metaData.handlebars.layouts.default",
             "parts": {
-              "head": ">context.metaData.handlebars.templates.pages_head-tags",
-              "body": ">context.metaData.handlebars.templates.account_sign-up"
+              "head": ">context.metaData.handlebars.templates.page_head-tags",
+              "body": ">context.metaData.handlebars.templates.account_auth_sign-up"
             },
             "contentType": "text/html"
           }

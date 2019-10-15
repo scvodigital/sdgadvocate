@@ -1,39 +1,20 @@
 {
   "name": "home",
-  "pattern": "/",
-  "debug": true,
-  "metaData": {
-    "hideSearch": true,
-    "title": "Advocate Programme - Sustainable Development Goals - UN House Scotland"
-  },
+  "pattern": ["/", ""],
+  "debug": false,
+  "errorRoute": "five_hundred",
   "tasks": [
     "context.metaData.commonTasks.authNotRequired",
-    "context.metaData.commonTasks.getSignUpStatus",
-    "context.metaData.commonTasks.fullSignUpRequired",
     {
-      "name": "destination",
-      "taskModule": "renderLayout",
-      "renderer": "handlebars",
+      "name": "reroute",
+      "taskModule": "reroute",
       "config": {
-        "logic": {
-          "if": [
-            "default"
-          ]
-        },
-        "output": "body",
-        "layouts": {
-          "default": {
-            "layout": ">context.metaData.handlebars.layouts.default",
-            "parts": {
-              "head": ">context.metaData.handlebars.templates.pages_head-tags",
-              "body": ">context.metaData.handlebars.templates.pages_home",
-              "foot": ">context.metaData.handlebars.templates.pages_foot"
-            },
-            "contentType": "text/html"
-          }
-        }
+        "if": [
+          { "missing": ["data.auth.uid"] },
+          "home_not_authenticated",
+          "home_authenticated"
+        ]
       }
     }
-
   ]
 }

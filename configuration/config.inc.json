@@ -10,84 +10,37 @@
   "metaData": {
     "assetsVersion": "{:../package.json@version}",
     "assetsBase": "https://storage.googleapis.com/scvo-assets/test/sdgadvocate/",
-    "title": "SDG Advocate Programme",
-    "menus": "{:./sdgadvocate-menus.json}",
-    "accountInfoValidation": "{:./account-info-validation.json}",
-    "elasticsearchUrl": "{$./data/elasticsearch-url.txt}",
-    "commonTasks": {
-      "authNotRequired": {
-        "name": "auth",
-        "taskModule": "firebaseAuth",
-        "config": {
-          "tokenPath": "request.cookies.sa_token",
-          "cookieName": "sa_cookie",
-          "cookieOptions": {
-            "maxAge": 1209600000,
-            "secure": true,
-            "path": "/"
-          },
-          "appName": "sdgadvocate",
-          "notAuthenticatedRoute": ""
-        }
-      },
-      "authRequired": {
-        "name": "auth",
-        "taskModule": "firebaseAuth",
-        "config": {
-          "tokenPath": "request.cookies.sa_token",
-          "cookieName": "sa_cookie",
-          "cookieOptions": {
-            "maxAge": 1209600000,
-            "secure": true,
-            "path": "/"
-          },
-          "appName": "sdgadvocate",
-          "notAuthenticatedRoute": "sign_in"
-        }
-      },
-      "getSignUpStatus": {
-        "name": "signUpStatus",
-        "taskModule": "firebaseRtbGet",
-        "renderer": "handlebars",
-        "config": {
-          "appName": "sdgadvocate",
-          "pathTemplate": "/{{default data.auth.uid 'no-such-read-profile'}}/signup-status",
-          "defaultData": ""
-        }
-      },
-      "fullSignUpRequired": {
-        "name": "signUpReroute",
-        "taskModule": "reroute",
-        "config": {
-          "if": [
-            {
-              "and": [
-                {
-                  "!=": [
-                    {
-                      "var": "data.auth.uid"
-                    },
-                    null
-                  ]
-                },
-                {
-                  "!=": [
-                    {
-                      "var": "data.signUpStatus"
-                    },
-                    null
-                  ]
-                }
-              ]
-            },
-            {
-              "var": "data.signUpStatus.status"
-            },
-            null
-          ]
-        }
-      }
+    "title": "SDG Advocate",
+    "fullTitle": "UN SDG Advocate",
+    "tagline": "Contributing towards the Sustainable Development Goals",
+    "certificateName": "Globe",
+    "accountName": "My Globes",
+    "url": "https://sdgadvocate.org",
+    "twitter": "unhousescotland",
+    "contacts": {
+      "admin": "hello@unhscotland.org.uk",
+      "noreply": "noreply@unhscotland.org.uk",
+      "technical": "webhelpdesk@scvo.org.uk"
     },
+    "emailSendSettings": "{:./data/email-send-settings.json}",
+    "theme": {
+      "primary": "#009DDA",
+      "secondary": "#253887",
+      "challenge": "#008DDE",
+      "approach": "#3BAA34",
+      "ascent": "#F05B23",
+      "summit": "#514680",
+      "footer": "#591669",
+      "copyright": "#e7eaec"
+    },
+    "menus": "{:./data/menus.json}",
+    "accountInfoValidation": "{:./data/account-info-validation.json}",
+    "taskInfoValidation": "{:./data/task-info-validation.json}",
+    "certificates": "{:./data/certificates.json}",
+    "tsiList": "{:./data/tsi-list.json}",
+    "globalGoals": "{:./data/global-goals.json}",
+    "elasticsearchUrl": "{$./data/elasticsearch-url.txt}",
+    "volunteeringTerms": "{:./data/volunteering-terms.json}",
     "handlebars": {
       "partials": {
         "{$./partials/**/*.*}": "includeRelativePath=false&regexExpression=(-)&regexOptions=gi&regexReplace=_"
@@ -100,7 +53,19 @@
       },
       "queries": {
         "{$./queries/**/*.*}": ""
+      },
+      "frontend": {
+        "tasks": {
+          "{$./frontend/tasks/**/*.*}": ""
+        },
+        "configs": {
+          "{$./frontend/configs/**/*.*}": ""
+        },
+        "partials": {
+          "{$./frontend/partials/**/*.*}": "includeRelativePath=false&regexExpression=(-)&regexOptions=gi&regexReplace=_"
+        }
       }
-    }
+    },
+    "commonTasks": "{:./data/common-tasks.json}"
   }
 }

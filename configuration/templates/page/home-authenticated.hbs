@@ -1,0 +1,63 @@
+<div class="empty">
+  {{#if @root.data.isAdmin ~}}
+  {{!-- Group admin --}}
+  <div class="empty-icon">
+    <span class="fal fa-users fa-3x"></span>
+  </div>
+  <p class="empty-title h5">
+    {{#compare (sumArray (pluck @root.data.tasksInfo "hours")) 0 ~}}
+    You haven't added any groups yet
+    {{else}}
+    You have added {{inflect (length @root.data.tasksInfo) "group" "groups" true}}
+    {{/compare ~}}
+  </p>
+  <div class="empty-action">
+    <a href="/groups" class="btn btn-primary">Volunteering groups</a>
+  </div>
+  {{else}}
+  {{!-- Volunteer --}}
+  <div class="empty-icon">
+    <span class="fal fa-user-clock fa-3x"></span>
+  </div>
+  <p class="empty-title h5">
+    {{#compare (sumArray (pluck @root.data.tasksInfo "hours")) 0 ~}}
+    You haven't logged any volunteering yet
+    {{else}}
+    You have logged {{inflect (sumArray (pluck @root.data.tasksInfo "hours")) "hour" "hours" true}} so far
+    {{/compare ~}}
+  </p>
+  {{#compare (sumArray (pluck @root.data.tasksInfo "hours")) 0 ~}}
+  <p class="empty-subtitle">
+    The Saltire Awards gives you recognition for the volunteering you do.
+  </p>
+  {{/compare ~}}
+  <div class="empty-action">
+    <a href="/hours" class="btn btn-primary">My volunteering - log hours</a>
+    <a href="/search" class="btn btn-link">Find a new volunteering opportunity</a>
+  </div>
+  {{/if ~}}
+</div>
+
+<div class="content-break equal-height">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <polygon fill="#EEF0FA" points="100,0 100,100 0,0"></polygon>
+  </svg>
+  <div class="container">
+    <div class="columns">
+      <div class="column col-9">
+        <h3>
+          Support &amp; information
+        </h3>
+        {{#if @root.data.accountInfo.postcode ~}}
+        {{> local_contact_info}}
+        {{else}}
+        If you enter a postcode on your <a href="/settings">profile</a> you'll see local contact information here. Please see the <a href="/contact">contact us</a> page for all areas.
+        {{/if ~}}
+      </div>
+      <div class="column col-3 t-margin">
+        {{> local_contact_logo}}
+      </div>
+    </div>
+  </div>
+</div>
+

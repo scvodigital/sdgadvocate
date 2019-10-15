@@ -1,0 +1,12 @@
+<div class="container">
+  {{#compare @root.data.primaryResponse.hits.total ">" 0 ~}}
+  <!-- <h1>
+    {{{@root.data.primaryResponse.hits.hits.[0]._source.title}}}
+  </h1> -->
+  {{{@root.data.primaryResponse.hits.hits.[0]._source.content}}}
+  {{else}}
+  <h2>
+    Error 404: Page not found
+  </h2>
+  {{/compare ~}}
+</div>

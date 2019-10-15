@@ -1,0 +1,78 @@
+<div class="container">
+  {{> opportunity_search_form}}
+  <div class="head">
+    <div class="columns col-gapless">
+      <div class="column col-4 action">
+        <ul class="tab tab-block">
+          <li class="tab-item{{#compare @root.request.url.pathname '/search'}} active{{/compare}}">
+            <a href="{{concat '/search' (if (compare (querystringify @root.request.params.query utm_source=null utm_campaign=null utm_medium=null exclude=null) '') '' else='?') (querystringify @root.request.params.query utm_source=null utm_campaign=null utm_medium=null)}}">
+              <span class="far fa-fw fa-list"></span>
+              List
+            </a>
+          </li>
+          <li class="tab-item{{#compare @root.request.url.pathname '/search/map'}} active{{/compare}}">
+            <a href="{{concat '/search/map' (if (compare (querystringify @root.request.params.query utm_source=null utm_campaign=null utm_medium=null exclude=null) '') '' else='?') (querystringify @root.request.params.query utm_source=null utm_campaign=null utm_medium=null)}}">
+              <span class="far fa-fw fa-map-marker-alt"></span>
+              Map
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  {{#if @root.data.search_data.map_results.pagination.totalResults ~}}
+  {{!--#ifAny (compare @root.data.search_data.map_results.aggregations.geo_search.buckets.[0].doc_count ">" 0) (compare @root.request.params.query.location "===" "") ~--}}
+  <div class="card-loader" id="opportunity-map-loader" style="display: flex">
+    <div class="card-loader-inner">
+      <span class="far fa-2x fa-spinner-third fa-spin"></span>
+    </div>
+  </div>
+  <div id="map-full" data-map-name="fullMap" class="grid-content" data-map-clustered-options='{
+  {{#ifAll @root.request.params.query.distance @root.request.params.query.lat @root.request.params.query.lng ~}}
+  "circle": {
+    "lat": {{@root.request.params.query.lat}},
+    "lng": {{@root.request.params.query.lng}},
+    "radius": {{default (multiply @root.request.params.query.distance 1.60934) 0}},
+    "color": "#7bc143"
+  }
+  {{/ifAll ~}}
+  }'>
+    <!-- Markers for map -->
+    {{#each @root.data.search_data.map_results.hits.hits ~}}
+      {{#if _source.geo_coords ~}}
+        {{#each (arrayify _source.geo_coords) ~}}
+          {{#if @root.request.params.query.distance ~}}
+            {{#compare (itemAt ../fields.distance @index) "<" @root.request.params.query.distance ~}}
+              <marker style="display:none;" data-map="fullMap" data-lat="{{lat}}" data-lng="{{lon}}" data-shortlisted="{{#each @root.data.favourites.items}}{{#compare id "===" ../../_source.Id}}true{{/compare}}{{/each}}" data-title="{{../_source.title}}">
+                {{> opportunity_map ../_source map_postcode=(itemAt (arrayify (split ../_source.postcode ",")) @index)}}
+              </marker>
+            {{/compare ~}}
+          {{else}}
+            <marker style="display:none;" data-map="fullMap" data-lat="{{lat}}" data-lng="{{lon}}" data-shortlisted="{{#each @root.data.favourites.items}}{{#compare id "===" ../../_source.Id}}true{{/compare}}{{/each}}" data-title="{{../_source.title}}">
+              {{> opportunity_map ../_source map_postcode=(itemAt (arrayify (split ../_source.postcode ",")) @index)}}
+            </marker>
+          {{/if ~}}
+        {{/each ~}}
+      {{/if ~}}
+    {{/each ~}}
+  </div>
+  {{!-- else}}
+  <div class="grid-content">
+    <div class="search-info">
+      No location-specific results could be found
+    </div>
+  </div>
+  {{/ifAny ~--}}
+  {{else}}
+  <div class="grid-content">
+    {{> search_info paging=@root.data.search_data.detailed_results.pagination}}
+  </div>
+  {{/if ~}}
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var $loader = $('#opportunity-map-loader');
+    $loader.css('display', 'none');
+  });
+</script>
