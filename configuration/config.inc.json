@@ -20,7 +20,7 @@
     "contacts": {
       "admin": "hello@unhscotland.org.uk",
       "noreply": "noreply@unhscotland.org.uk",
-      "technical": "webhelpdesk@scvo.org.uk"
+      "technical": "webhelpdesk@scvo.scot"
     },
     "emailSendSettings": "{:./data/email-send-settings.json}",
     "theme": {
